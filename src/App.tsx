@@ -1,9 +1,22 @@
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Canvas, ThreeElements, useFrame } from "@react-three/fiber";
 import { useControls } from "leva";
 import { ECS } from "./lib/state";
 import "./App.css";
 import Player from "./GameObjects/Player/player";
+import {
+  KeyboardControls,
+  KeyboardControlsEntry,
+  PerspectiveCamera,
+} from "@react-three/drei";
+
+enum Controls {
+  forward = "forward",
+  back = "back",
+  left = "left",
+  right = "right",
+  jump = "jump",
+}
 
 const movingEntities = ECS.world.with("position", "velocity");
 
@@ -48,21 +61,32 @@ function Box(props: ThreeElements["mesh"]) {
 }
 
 function App() {
+  const map = useMemo<KeyboardControlsEntry<Controls>[]>(
+    () => [
+      { name: Controls.forward, keys: ["ArrowUp", "KeyW"] },
+      { name: Controls.back, keys: ["ArrowDown", "KeyS"] },
+      { name: Controls.left, keys: ["ArrowLeft", "KeyA"] },
+      { name: Controls.right, keys: ["ArrowRight", "KeyD"] },
+      { name: Controls.jump, keys: ["Space"] },
+    ],
+    []
+  );
   return (
     <div style={{ width: "100%", height: "100%" }}>
-      <Canvas flat>
-        <ambientLight intensity={Math.PI / 2} />
-        <spotLight
-          position={[10, 10, 10]}
-          angle={0.15}
-          penumbra={2}
-          decay={0}
-          intensity={Math.PI}
-        />
-        <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
-        <Box position={[-1.2, 0, 0]} />
-        <Box position={[1.2, 0, 0]} />
-      </Canvas>
+      <KeyboardControls map={map}>
+        <Canvas>
+          <PerspectiveCamera makeDefault>
+            <ambientLight intensity={Math.PI / 2} />
+            <pointLight
+              position={[-10, -10, -10]}
+              decay={0}
+              intensity={Math.PI}
+            />
+            <Box position={[-1.2, 0, 0]} />
+            <Box position={[1.2, 0, 0]} />
+          </PerspectiveCamera>
+        </Canvas>
+      </KeyboardControls>
     </div>
   );
 }
