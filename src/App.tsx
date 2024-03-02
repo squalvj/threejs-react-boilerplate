@@ -1,13 +1,6 @@
 import { Canvas } from "@react-three/fiber";
 import "./App.css";
-import {
-  CameraControls,
-  Center,
-  Environment,
-  Grid,
-  Sky,
-} from "@react-three/drei";
-import Model from "./Store1.jsx";
+import { CameraControls, Center, Environment, Grid } from "@react-three/drei";
 
 function Ground() {
   const gridConfig = {
@@ -31,7 +24,10 @@ const Comp = () => {
       <CameraControls />
       <Center top>
         <directionalLight castShadow position-z={0.5} intensity={10} />
-        <Model />
+        <mesh receiveShadow>
+          <boxGeometry args={[1, 1, 1]} />
+          <meshStandardMaterial color={"hotpink"} />
+        </mesh>
         <Environment preset="apartment" />
       </Center>
     </>
@@ -43,12 +39,6 @@ function App() {
     <div style={{ width: "100%", height: "100%" }}>
       <Canvas shadows camera={{ position: [0, 3, 5], fov: 60 }}>
         <Comp />
-        <Sky
-          distance={450000}
-          sunPosition={[0, 1, 0]}
-          inclination={0}
-          azimuth={0.25}
-        />
         <Ground />
       </Canvas>
     </div>
